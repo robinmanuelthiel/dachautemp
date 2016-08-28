@@ -16,4 +16,4 @@ Due Event Hubs are currently only available in the [old Azure portal](https://ma
 
 Once this is done, select your Event Hub inside the portal, click on *Configure* and create two shared access policies: One for your client (send permission only) and one for your Stream Analytics job (manage, send and listen permissions).
 
-Take a look at the shared access key generator below and copy replace the primary key with the placeholder in the [EventHubService.cs](https://github.com/robinmanuelthiel/DachauTemp/blob/master/DachauTemp.Windows/Services/EventHubService.cs) file.
+Take a look at the shared access key generator below and copy replace the primary key with the placeholder in the [EventHubService.cs](https://github.com/robinmanuelthiel/DachauTemp/blob/master/DachauTemp.Windows/Services/EventHubService.cs#L20) file.
