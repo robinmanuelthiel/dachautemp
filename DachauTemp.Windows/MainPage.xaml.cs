@@ -48,7 +48,7 @@ namespace DachauTemp.Windows
 
                 // Setup timer to collect and send data repetitively
                 this.timer = new DispatcherTimer();
-                this.timer.Interval = TimeSpan.FromMilliseconds(60000);
+                this.timer.Interval = TimeSpan.FromMinutes(30);
                 this.timer.Tick += Timer_Tick;
                 this.timer.Start();
             }
@@ -71,7 +71,7 @@ namespace DachauTemp.Windows
             var humidity = 0.0;
 
             // Update UI
-            TempValue.Text = Math.Round(temp, 2) + " C";
+            TempValue.Text = Math.Round(temp, 2) + " \u00B0C";
             HumidityValue.Text = Math.Round(humidity, 2) + "%";
             UpdateValue.Text = DateTime.Now.ToString();
 
