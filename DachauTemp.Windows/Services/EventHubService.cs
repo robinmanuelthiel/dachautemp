@@ -17,7 +17,7 @@ namespace DachauTemp.Windows.Services
     public class EventHubService
     {
         private const string sasKeyName = "DachauTempSender";
-        private const string sasKeyValue = "YOUR_KEY_HERE";
+        private const string sasKeyValue = "WYlJMge+srseoke+s98WWitjZ+0NjSvhKK5LtqRzhfo=";
         private const string baseAddress = "https://dachautemp-ns.servicebus.windows.net";
         private HttpClient httpClient = new HttpClient();
 
@@ -29,7 +29,7 @@ namespace DachauTemp.Windows.Services
         /// <returns></returns>
         public async Task SendTempAndHumidityAsync(double temperature, double humidity)
         {
-            var tempHumidityEvent = new TempHumidityEvent { DateTime = DateTime.Now, Temperature = temperature, Humidity = humidity };
+            var tempHumidityEvent = new TempHumidityEvent { DateTime = DateTime.Now.ToUniversalTime(), Temperature = temperature, Humidity = humidity };
             await SendEventAsync(tempHumidityEvent);
         }
 
