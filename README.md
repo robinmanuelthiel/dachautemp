@@ -2,9 +2,9 @@
 This is a sample demo application that I use to measure the current temperature and humidity data in my apartment in Dachau (Germany) to collect them in the cloud.
 
 ## Setup
-I use a Raspberry Pi 3 running [Windows 10 IoT Core](https://developer.microsoft.com/en-us/windows/iot) connected with the [GHI Electronics FEZ Hat](https://www.ghielectronics.com/catalog/product/500) which comes with an integrated tempertature sensor that can be accessed super easy with the according library that is available via [NuGet](https://www.nuget.org/packages/GHIElectronics.UWP.Shields.FEZHAT/).
+I use a Raspberry Pi 3 running [Windows 10 IoT Core](https://developer.microsoft.com/en-us/windows/iot) connected with the [GHI Electronics FEZ Hat](https://www.ghielectronics.com/catalog/product/500) or [FEZ Cream](https://www.ghielectronics.com/catalog/product/541). Both come with a tempertature sensor,the FEZ Cream can also measure humidity.  Both shields that can be accessed super easy with the according libraries that are available via NuGet.
 
-On the device runs a simple Universal Windows Application that uses the FEZ Hat driver to measure the temperature data (humidity is not implemented yed) and sends them together with the current time stamp to an [Azure Event Hub](https://azure.microsoft.com/services/event-hubs/) that collects the data.
+On the device runs a simple Universal Windows Application that uses the FEZ driver to measure the temperature data (humidity is only supported on FEZ Cream) and sends them together with the current time stamp to an [Azure Event Hub](https://azure.microsoft.com/services/event-hubs/) that collects the data.
 
 Once the data rached the Event Hub, an [Azure Stream Analytics](https://azure.microsoft.com/services/stream-analytics/) job sends the values to a [Power BI](https://powerbi.microsoft.com) dashboard where I can monitor the values.
 
@@ -26,7 +26,13 @@ private const string baseAddress = "https://dachautemp-ns.servicebus.windows.net
 ```
 
 #### 2. Send measurements to the event hub
-This is mainly what the code does. Just deploy it on a Raspberry Pi with Windows 10 IoT Core and FEZ Hat connected and run the code. The application will log into your EventHub and send it an updated temperature every 30 minutes.
+This is mainly what the code does. Just deploy it on a Raspberry Pi with Windows 10 IoT Core and FEZ Hat or FEZ Cream connected. Head over to the [MainPage.xaml.cs](https://github.com/robinmanuelthiel/DachauTemp/blob/master/DachauTemp.Windows/MainPage.xaml.cs#L32#L33) file and uncomment one of these lines to choose between the FEZ Hat or FEZ Cream. When using the FEZ Cream, you have to provide the port your temperature-humidity-sensor is connected to.
+
+```
+shield = new GHIFezHatShield();
+shield = new GHIFezCreamShield(4);
+```
+Now simply deploy and run the code. The application will login to your EventHub and send it an updated temperature every 30 minutes.
 
 #### 3. Stream the EventHub data to a Power BI dashboard
 To view the data in a Power BI dashboard, we need to connect the Event Hub and Power BI together. This connection is the Stream Analytics job. Simply head over to the Azure portal and create a one. You will be asked for an input and output. Choose the Event Hub as the input source for your job and select the second access policy with manage, send and listen permissions. The output source should be an Power BI account that you can connect with Azure.
