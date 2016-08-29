@@ -6,7 +6,7 @@ I use a Raspberry Pi 3 running [Windows 10 IoT Core](https://developer.microsoft
 
 On the device runs a simple Universal Windows Application that uses the FEZ driver to measure the temperature data (humidity is only supported on FEZ Cream) and sends them together with the current time stamp to an [Azure Event Hub](https://azure.microsoft.com/services/event-hubs/) that collects the data.
 
-Once the data rached the Event Hub, an [Azure Stream Analytics](https://azure.microsoft.com/services/stream-analytics/) job sends the values to a [Power BI](https://powerbi.microsoft.com) dashboard where I can monitor the values.
+Once the data reached the Event Hub, an [Azure Stream Analytics](https://azure.microsoft.com/services/stream-analytics/) job sends the values to a [Power BI](https://powerbi.microsoft.com) dashboard where I can monitor the values.
 
 ## How to get started
 To get this demo running you need to follow these steps:
