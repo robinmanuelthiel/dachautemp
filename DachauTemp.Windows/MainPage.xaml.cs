@@ -1,6 +1,7 @@
 ﻿using DachauTemp.Windows.Models;
 using DachauTemp.Windows.Services;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,8 +30,8 @@ namespace DachauTemp.Windows
             {
                 // Connect with GHI shield
                 // Uncomment one of the following two lines to either init with the GHI FEZ Hat or GHI FEZ Cream
-                shield = new GHIFezHatShield();
-                //shield = new GHIFezCreamShield(4);
+                //shield = new GHIFezHatShield();
+                shield = new GHIFezCreamShield(4);
 
                 // Init shield
                 await shield.InitiatizeAsync();
@@ -44,10 +45,11 @@ namespace DachauTemp.Windows
                 this.timer.Tick += Timer_Tick;
                 this.timer.Start();
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception ex)
             {
-                // No FEZHat found
-                UpdateValue.Text = "No shield found.";
+                // Right hat not found
+                UpdateValue.Text = "The desired shield could not be found.";
+                Debug.WriteLine(ex);
             }
         }
 
