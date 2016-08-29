@@ -1,22 +1,9 @@
-﻿using DachauTemp.Windows.Services;
-using GHIElectronics.UWP.Shields;
+﻿using DachauTemp.Windows.Models;
+using DachauTemp.Windows.Services;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace DachauTemp.Windows
 {
@@ -26,8 +13,8 @@ namespace DachauTemp.Windows
     public sealed partial class MainPage : Page
     {
         private EventHubService eventHubService;
-        private FEZHAT hat;
         private DispatcherTimer timer;
+        private IGHIShield shield;
 
         public MainPage()
         {
@@ -40,8 +27,13 @@ namespace DachauTemp.Windows
         {
             try
             {
-                // Connect with GHI FEZ Hat
-                hat = await FEZHAT.CreateAsync();
+                // Connect with GHI shield
+                // Uncomment one of the following two lines to either init with the GHI FEZ Hat or GHI FEZ Cream
+                shield = new GHIFezHatShield();
+                //shield = new GHIFezCreamShield(4);
+
+                // Init shield
+                await shield.InitiatizeAsync();
 
                 // Collect and send data once
                 await ProcessTempAndHumidAsync();
@@ -55,7 +47,7 @@ namespace DachauTemp.Windows
             catch (ArgumentOutOfRangeException)
             {
                 // No FEZHat found
-                UpdateValue.Text = "No FEZHat found.";
+                UpdateValue.Text = "No shield found.";
             }
         }
 
@@ -67,8 +59,8 @@ namespace DachauTemp.Windows
         private async Task ProcessTempAndHumidAsync()
         {
             // Collect data
-            var temp = hat.GetTemperature();
-            var humidity = 0.0;
+            var temp = shield.GetTemperature();
+            var humidity = shield.GetHumidity();
 
             // Update UI
             TempValue.Text = Math.Round(temp, 2) + " \u00B0C";

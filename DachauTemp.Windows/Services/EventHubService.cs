@@ -1,13 +1,10 @@
 ﻿using DachauTemp.Windows.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
@@ -17,7 +14,7 @@ namespace DachauTemp.Windows.Services
     public class EventHubService
     {
         private const string sasKeyName = "DachauTempSender";
-        private const string sasKeyValue = "YOUR_KEY_HERE";
+        private const string sasKeyValue = "WYlJMge+srseoke+s98WWitjZ+0NjSvhKK5LtqRzhfo=";
         private const string baseAddress = "https://dachautemp-ns.servicebus.windows.net";
         private HttpClient httpClient = new HttpClient();
 
