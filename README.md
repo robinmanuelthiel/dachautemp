@@ -2,7 +2,7 @@
 This is a sample demo application that I use to measure the current temperature and humidity data in my apartment in Dachau (Germany) to collect them in the cloud.
 
 ## Setup
-I use a Raspberry Pi 3 running [Windows 10 IoT Core](https://developer.microsoft.com/en-us/windows/iot) connected with the [GHI Electronics FEZ Hat](https://www.ghielectronics.com/catalog/product/500) or [FEZ Cream](https://www.ghielectronics.com/catalog/product/541). Both come with a tempertature sensor,the FEZ Cream can also measure humidity.  Both shields that can be accessed super easy with the according libraries that are available via NuGet.
+I use a Raspberry Pi 3 running [Windows 10 IoT Core](https://developer.microsoft.com/en-us/windows/iot) connected with the [GHI Electronics FEZ Hat](https://www.ghielectronics.com/catalog/product/500) or [FEZ Cream](https://www.ghielectronics.com/catalog/product/541). Both come with a tempertature sensor, the FEZ Cream can also measure humidity.  Both shields that can be accessed super easy with the according libraries that are available via NuGet.
 
 On the device runs a simple Universal Windows Application that uses the FEZ driver to measure the temperature data (humidity is only supported on FEZ Cream) and sends them together with the current time stamp to an [Azure Event Hub](https://azure.microsoft.com/services/event-hubs/) that collects the data.
 
