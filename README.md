@@ -17,6 +17,13 @@ Due Event Hubs are currently only available in the [old Azure portal](https://ma
 Once this is done, select your Event Hub inside the portal, click on *Configure* and create two shared access policies: One for your client (send permission only) and one for your Stream Analytics job (manage, send and listen permissions).
 
 Take a look at the shared access key generator below and copy replace the primary key with the placeholder in the [EventHubService.cs](https://github.com/robinmanuelthiel/DachauTemp/blob/master/DachauTemp.Windows/Services/EventHubService.cs#L20) file.
+```
+private const string sasKeyValue = "YOUR_KEY_HERE";
+```
+Next, replace my Event Hub address with yours.
+```
+private const string baseAddress = "https://dachautemp-ns.servicebus.windows.net";
+```
 
 #### 2. Send measurements to the event hub
 This is mainly what the code does. Just deploy it on a Raspberry Pi with Windows 10 IoT Core and FEZ Hat connected and run the code. The application will log into your EventHub and send it an updated temperature every 30 minutes.
