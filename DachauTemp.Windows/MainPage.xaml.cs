@@ -21,6 +21,7 @@ namespace DachauTemp.Windows
         private GpioPin greenStatus;
         private List<double> tempMeasurements;
         private List<double> humidMeasurements;
+        private bool thisMinutesMessageSent;
 
         public MainPage()
         {
@@ -31,6 +32,7 @@ namespace DachauTemp.Windows
             gpio = GpioController.GetDefault();
             tempMeasurements = new List<double>();
             humidMeasurements = new List<double>();
+            thisMinutesMessageSent = false;
         }
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -88,10 +90,21 @@ namespace DachauTemp.Windows
             HumidityValue.Text = Math.Round(humid, 2) + "%";
             UpdateValue.Text = DateTime.Now.ToString();
 
-            // Send average of collected humid and temp every full 30 minutes
+            // Send average of collected humid and temp once every full 30 minutes
             var minute = DateTime.Now.Minute;
-            if (minute == 0 || minute == 30)
-                await SendAvgTempAndHumidAsync();
+            if (minute == 00 || minute == 30)
+            {
+                // Ensures, that only one message is sent per minute
+                if (!thisMinutesMessageSent)
+                {
+                    thisMinutesMessageSent = true;
+                    await SendAvgTempAndHumidAsync();
+                }
+            }
+            else
+            {
+                thisMinutesMessageSent = false;
+            }
         }
 
         private async Task SendAvgTempAndHumidAsync()
