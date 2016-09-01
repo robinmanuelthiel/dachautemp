@@ -2,7 +2,6 @@
 using DachauTemp.Windows.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -12,9 +11,6 @@ using Windows.UI.Xaml.Controls;
 
 namespace DachauTemp.Windows
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
         private EventHubService eventHubService;
