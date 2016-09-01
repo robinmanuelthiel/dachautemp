@@ -1,7 +1,9 @@
 ﻿using DachauTemp.Windows.Models;
 using DachauTemp.Windows.Services;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
@@ -21,18 +23,22 @@ namespace DachauTemp.Windows
         private GpioController gpio;
         private GpioPin redStatus;
         private GpioPin greenStatus;
+        private List<double> tempMeasurements;
+        private List<double> humidMeasurements;
 
         public MainPage()
         {
-            this.InitializeComponent();
-            this.Loaded += MainPage_Loaded;
+            InitializeComponent();
+            Loaded += MainPage_Loaded;
+
             eventHubService = new EventHubService();
+            gpio = GpioController.GetDefault();
+            tempMeasurements = new List<double>();
+            humidMeasurements = new List<double>();
         }
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            gpio = GpioController.GetDefault();
-
             try
             {
                 // Register status LEDs
@@ -56,20 +62,16 @@ namespace DachauTemp.Windows
                 // Init shield
                 await shield.InitiatizeAsync();
 
-                // Collect and send data once
-                await ProcessTempAndHumidAsync();
-
                 // Setup timer to collect and send data repetitively
-                this.timer = new DispatcherTimer();
-                this.timer.Interval = TimeSpan.FromSeconds(1);
-                this.timer.Tick += Timer_Tick;
-                this.timer.Start();
+                timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromSeconds(1);
+                timer.Tick += Timer_Tick;
+                timer.Start();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Right hat not found
                 UpdateValue.Text = "The desired shield could not be found.";
-                Debug.WriteLine(ex);
             }
         }
 
@@ -79,25 +81,35 @@ namespace DachauTemp.Windows
             redStatus?.Write(GpioPinValue.Low);
             greenStatus?.Write(GpioPinValue.Low);
 
-            // Update humid and temp every 30 minutes
-            var minute = DateTime.Now.Minute;
-            if (minute == 0 || minute == 30)
-                await ProcessTempAndHumidAsync();
-        }
-
-        private async Task ProcessTempAndHumidAsync()
-        {
-            // Collect data
+            // Collect temperature and humidity
             var temp = shield.GetTemperature();
-            var humidity = shield.GetHumidity();
+            var humid = shield.GetHumidity();
+            tempMeasurements.Add(temp);
+            humidMeasurements.Add(humid);
 
             // Update UI
             TempValue.Text = Math.Round(temp, 2) + " \u00B0C";
-            HumidityValue.Text = Math.Round(humidity, 2) + "%";
+            HumidityValue.Text = Math.Round(humid, 2) + "%";
             UpdateValue.Text = DateTime.Now.ToString();
 
+            // Send average of collected humid and temp every full 30 minutes
+            var minute = DateTime.Now.Minute;
+            if (minute == 0 || minute == 30)
+                await SendAvgTempAndHumidAsync();
+        }
+
+        private async Task SendAvgTempAndHumidAsync()
+        {
+            // Calculate average
+            var avgTemp = tempMeasurements.Average();
+            var avgHumid = humidMeasurements.Average();
+
+            // Clear lists
+            tempMeasurements.Clear();
+            humidMeasurements.Clear();
+
             // Send data to event hub
-            await eventHubService.SendTempAndHumidityAsync(temp, humidity);
+            await eventHubService.SendTempAndHumidityAsync(avgTemp, avgHumid);
         }
     }
 }
