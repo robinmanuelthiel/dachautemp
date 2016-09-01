@@ -2,7 +2,9 @@
 using DachauTemp.Windows.Services;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.Devices.Gpio;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -16,6 +18,9 @@ namespace DachauTemp.Windows
         private EventHubService eventHubService;
         private DispatcherTimer timer;
         private IGHIShield shield;
+        private GpioController gpio;
+        private GpioPin redStatus;
+        private GpioPin greenStatus;
 
         public MainPage()
         {
@@ -26,6 +31,21 @@ namespace DachauTemp.Windows
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            gpio = GpioController.GetDefault();
+
+            try
+            {
+                // Register status LEDs
+                redStatus = gpio.OpenPin(35);
+                redStatus.SetDriveMode(GpioPinDriveMode.Output);
+                greenStatus = gpio.OpenPin(47);
+                greenStatus.SetDriveMode(GpioPinDriveMode.Output);
+            }
+            catch (COMException)
+            {
+                // Some Raspberry Pi Models (like model 3) can't control power and status LEDs via pins...
+            }
+
             try
             {
                 // Connect with GHI shield
@@ -41,7 +61,7 @@ namespace DachauTemp.Windows
 
                 // Setup timer to collect and send data repetitively
                 this.timer = new DispatcherTimer();
-                this.timer.Interval = TimeSpan.FromMinutes(30);
+                this.timer.Interval = TimeSpan.FromSeconds(1);
                 this.timer.Tick += Timer_Tick;
                 this.timer.Start();
             }
@@ -55,7 +75,14 @@ namespace DachauTemp.Windows
 
         private async void Timer_Tick(object sender, object e)
         {
-            await ProcessTempAndHumidAsync();
+            // Switch off status LEDs
+            redStatus?.Write(GpioPinValue.Low);
+            greenStatus?.Write(GpioPinValue.Low);
+
+            // Update humid and temp every 30 minutes
+            var minute = DateTime.Now.Minute;
+            if (minute == 0 || minute == 30)
+                await ProcessTempAndHumidAsync();
         }
 
         private async Task ProcessTempAndHumidAsync()
