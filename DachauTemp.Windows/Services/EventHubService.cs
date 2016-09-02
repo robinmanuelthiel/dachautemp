@@ -26,7 +26,11 @@ namespace DachauTemp.Windows.Services
         /// <returns></returns>
         public async Task SendTempAndHumidityAsync(double temperature, double humidity)
         {
-            var tempHumidityEvent = new TempHumidityEvent { DateTime = DateTime.Now.ToUniversalTime(), Temperature = temperature, Humidity = humidity };
+            // Round to full seconds and milliseconds
+            var now = DateTime.Now.ToUniversalTime();
+            now = now.AddSeconds(now.Second * -1).AddMilliseconds(now.Millisecond * -1);
+
+            var tempHumidityEvent = new TempHumidityEvent { DateTime = now, Temperature = temperature, Humidity = humidity };
             await SendEventAsync(tempHumidityEvent);
         }
 
