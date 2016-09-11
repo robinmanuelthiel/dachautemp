@@ -14,7 +14,7 @@ namespace DachauTemp.Windows.Services
     public class EventHubService
     {
         private const string sasKeyName = "DachauTempSender";
-        private const string sasKeyValue = "WYlJMge+srseoke+s98WWitjZ+0NjSvhKK5LtqRzhfo=";
+        private const string sasKeyValue = "<YOUR_SAS_KEY_HERE>";
         private const string baseAddress = "https://dachautemp-ns.servicebus.windows.net";
         private HttpClient httpClient = new HttpClient();
 
