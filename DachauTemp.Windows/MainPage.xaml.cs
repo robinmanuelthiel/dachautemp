@@ -13,7 +13,7 @@ namespace DachauTemp.Windows
 {
     public sealed partial class MainPage : Page
     {
-        private EventHubService eventHubService;
+        private IotHubService iotHubService;
         private DispatcherTimer timer;
         private IGHIShield shield;
         private GpioController gpio;
@@ -28,7 +28,7 @@ namespace DachauTemp.Windows
             InitializeComponent();
             Loaded += MainPage_Loaded;
 
-            eventHubService = new EventHubService();
+            iotHubService = new IotHubService();
             gpio = GpioController.GetDefault();
             tempMeasurements = new List<double>();
             humidMeasurements = new List<double>();
@@ -118,7 +118,7 @@ namespace DachauTemp.Windows
             humidMeasurements.Clear();
 
             // Send data to event hub
-            await eventHubService.SendTempAndHumidityAsync(avgTemp, avgHumid);
+            await iotHubService.SendTempAndHumidityAsync(avgTemp, avgHumid);
         }
     }
 }

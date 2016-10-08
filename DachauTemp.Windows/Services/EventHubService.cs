@@ -11,10 +11,14 @@ using Windows.Security.Cryptography.Core;
 
 namespace DachauTemp.Windows.Services
 {
+    // ===========================================================================================
+    // INFORMATION: EventHubService is not needed anymore, due I switched over to the Azure IotHub
+    // ===========================================================================================
+
     public class EventHubService
     {
         private const string sasKeyName = "DachauTempSender";
-        private const string sasKeyValue = "<YOUR_SAS_KEY_HERE>";
+        private const string sasKeyValue = "{SAS Key}";
         private const string baseAddress = "https://dachautemp-ns.servicebus.windows.net";
         private HttpClient httpClient = new HttpClient();
 
